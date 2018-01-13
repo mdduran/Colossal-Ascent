@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
     public bool alive;
     public Rigidbody2D armRigidBody;
     public GameObject weapon;
-    public Vector2 bullet;
+    public GameObject bullet;
     public bool grounded;
     public float timePressed;
     // Use this for initialization
@@ -38,8 +38,6 @@ public class Player : MonoBehaviour {
         this.armRigidBody = GetComponent<Rigidbody2D>();
         this.characterController = (CharacterController)GetComponent(typeof(CharacterController));
         this.weapon = GetComponent<GameObject>();
-        this.bullet.x = 0;
-        this.bullet.y = 0;
         grounded = true;
         timePressed = 0;
         if (this.sprite == null)
@@ -171,7 +169,11 @@ public class Player : MonoBehaviour {
      */
      void Shoot() {
         //Check for button press
-        GameObject projectile = Instantiate<GameObject>(weapon, transform.position, transform.rotation);
+        GameObject projectile = Instantiate<GameObject>(bullet, transform.position, transform.rotation);
+        Vector2 temp;
+        temp.x = 0;
+        temp.y = 1000;
+        projectile.GetComponent<Rigidbody2D>().AddForce(temp);
          
      }
     
