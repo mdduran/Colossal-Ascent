@@ -10,6 +10,7 @@ using UnityEngine;
 public class Client
 {
     public IPEndPoint EndPoint;
+    public UdpClient Listener;
     public int Port;
     public int PlayerNum;
 
@@ -31,23 +32,21 @@ public class Client
 
     public void Run()
     {
-        UdpClient listener = new UdpClient(Port);
-        IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, Port);
+        Listener = new UdpClient(Port);
 
         try
         {
             while (Running)
             {
-                groupEP = new IPEndPoint(IPAddress.Any, Port);
                 byte[] bytes;
-                if (listener.Available > 0)
+                if (Listener.Available > 0)
                 {
-                    bytes = listener.Receive(ref groupEP);
+                    bytes = Listener.Receive(ref EndPoint);
                     // Parse Bytes into event
-
+                    
                 }
                 else
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
 
             }
         }
@@ -57,12 +56,15 @@ public class Client
         }
         finally
         {
-            listener.Close();
+            Listener.Close();
+            Listener = null;
         }
     }
 
     public void Send(byte[] bytes)
     {
+        if(Listener != null)
+            Listener.Send(bytes, bytes.Length, EndPoint);
     }
 
 }
