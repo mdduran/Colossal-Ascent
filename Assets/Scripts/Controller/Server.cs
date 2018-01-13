@@ -19,6 +19,8 @@ public class Server
 
     public void Start()
     {
+        Clients = new List<Client>();
+
         // Start thread
         thread = new Thread(Run);
         thread.Start();
@@ -31,6 +33,8 @@ public class Server
     public void Stop()
     {
         Running = false;
+        foreach (Client c in Clients)
+            c.Stop();
         thread.Join();
     }
 
@@ -48,9 +52,13 @@ public class Server
                 if (listener.Available > 0)
                 {
                     bytes = listener.Receive(ref groupEP);
-                    Debug.Log(groupEP + " Connected. " + bytesToString(bytes));
-                    CreateClient(groupEP);
-
+                    if(bytes[0] == (byte) OpCode.Connect) 
+                    {
+                        Debug.Log(groupEP + " Connected. " + bytesToString(bytes));
+                        CreateClient(groupEP);
+                        bytes[0] = (byte)OpCode.Accept;
+                        listener.Send(bytes, 1, groupEP);
+                    }                   
                 }
                 else
                     Thread.Sleep(50);
@@ -81,13 +89,9 @@ public class Server
             s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
 
             IPAddress broadcast = IPAddress.Parse("192.168.43.255");
+            IPEndPoint ep = new IPEndPoint(broadcast, 4210);
 
-            byte[] sendbuf = new byte[1];
-            sendbuf[0] = (byte)OpCode.Broadcast;
-
-            IPEndPoint ep = new IPEndPoint(broadcast, AcceptingPort);
-
-            s.SendTo(sendbuf, ep);
+            s.SendTo(OperationParser.Broadcast(AcceptingPort), ep);
             s.Close();
         }
         catch (Exception e)
@@ -102,7 +106,7 @@ public class Server
         string s = "";
         foreach(byte b in bytes)
         {
-            s += b.ToString();
+            s += b.ToString() + " ";
         }
         return s;
     }

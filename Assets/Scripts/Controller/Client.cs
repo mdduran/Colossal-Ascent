@@ -22,12 +22,19 @@ public class Client
     public Client(int PlayerNum, IPEndPoint EndPoint, int Port, Queue EventsQueue)
     {
         this.EndPoint = EndPoint;
+        Debug.Log(EndPoint + "");
         this.Port = Port;
         this.PlayerNum = PlayerNum;
         this.Events = EventsQueue;
 
         Running = true;
         Self = new Thread(Run);
+        Self.Start();
+    }
+
+    public void Stop()
+    {
+        Running = false;
     }
 
     public void Run()
@@ -43,7 +50,8 @@ public class Client
                 {
                     bytes = Listener.Receive(ref EndPoint);
                     // Parse Bytes into event
-                    
+                    Event e = OperationParser.Recieve(bytes, 0);
+                    Debug.Log(e.Action + " " + e.Value);
                 }
                 else
                     Thread.Sleep(10);
