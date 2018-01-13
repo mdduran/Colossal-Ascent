@@ -12,8 +12,7 @@ public class Server
     public int AcceptingPort;
     public int CommunicationPort;
     public int MaxClients;
-    public List<IPEndPoint> Clients;
-    public Socket Listen;
+    public List<Client> Clients;
     public bool Running;
 
     private Thread thread;
@@ -50,6 +49,7 @@ public class Server
                 {
                     bytes = listener.Receive(ref groupEP);
                     Debug.Log(groupEP + " Connected. " + bytesToString(bytes));
+                    CreateClient(groupEP);
                 }
                 else
                     Thread.Sleep(50);
@@ -66,8 +66,14 @@ public class Server
         }
     }
 
+    public void CreateClient(IPEndPoint ep)
+    {
+        Clients.Add(new Client(0, ep, CommunicationPort, EventQueue));
+    }
+
     public void Broadcast()
     {
+        Debug.Log("Broadcasting...");
         try
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -90,7 +96,7 @@ public class Server
 
     }
 
-    public string bytesToString(byte[] bytes)
+    public static string bytesToString(byte[] bytes)
     {
         string s = "";
         foreach(byte b in bytes)

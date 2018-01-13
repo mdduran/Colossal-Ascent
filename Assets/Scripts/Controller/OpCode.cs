@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum OpCode
 {
+    Error,
     Broadcast,
     Connect,
     Disconnect,
