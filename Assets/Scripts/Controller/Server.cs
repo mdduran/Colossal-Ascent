@@ -50,6 +50,7 @@ public class Server
                     bytes = listener.Receive(ref groupEP);
                     Debug.Log(groupEP + " Connected. " + bytesToString(bytes));
                     CreateClient(groupEP);
+
                 }
                 else
                     Thread.Sleep(50);
@@ -84,7 +85,7 @@ public class Server
             byte[] sendbuf = new byte[1];
             sendbuf[0] = (byte)OpCode.Broadcast;
 
-            IPEndPoint ep = new IPEndPoint(broadcast, 4210);
+            IPEndPoint ep = new IPEndPoint(broadcast, AcceptingPort);
 
             s.SendTo(sendbuf, ep);
             s.Close();
