@@ -6,20 +6,44 @@ public class Enemies : MonoBehaviour {
     public CharacterController characterController;
     public Animator animator;
     public Sprite sprite;
+    public SpriteRenderer sr;
     public int hp;
+    public bool hit;
     public float moveSpeed;
     public ArrayList patrolPoints;
+    public Vector2 newPoint;
     public Vector2 goalPoint;
     public int score;
     public bool alive;
-	// Use this for initialization
-	void Start () {
-		
-	}
+    // Use this for initialization
+    void Start () {
+        this.hp = 1;
+        this.moveSpeed = 20;
+        this.patrolPoints = new ArrayList();
+        this.goalPoint.x = 0;
+        this.goalPoint.y = 0;
+        this.score = 0;
+        this.alive = true;
+        this.characterController = (CharacterController)GetComponent(typeof(CharacterController));
+        if (this.sprite == null) {
+            Debug.LogError("Sprite not found!");
+        }
+        if (this.animator != null) {
+            this.animator = GetComponent<Animator>();
+        }
+        if (this.characterController != null)
+        {
+            this.characterController = (CharacterController)GetComponent(typeof(CharacterController));
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
+        SetHealth(hit);
+        SetMovespeed(moveSpeed);
+        SetPatrolPoints(newPoint);
+        SetScore(0);
+        this.alive = IsAlive(this.hp);
 	}
 
     /*
@@ -28,7 +52,7 @@ public class Enemies : MonoBehaviour {
      * Input: bool hit
      * Output: void
      */
-    void setHealth (bool hit) {
+    void SetHealth (bool hit) {
         if (hit)
         {
             hp = hp - 1;
@@ -36,12 +60,25 @@ public class Enemies : MonoBehaviour {
     }
 
     /*
+    * isHit
+    * Purpose: Set current integer health of enemy
+    * Input: bool hit
+    * Output: void
+    */
+    void IsHit (bool hit)
+    {
+        if (hit)
+        {
+            hp = hp - 1;
+        }
+    }
+    /*
      * getHealth
      * Purpose: Return current integer health of enemy
      * Input: void
      * Output: int hp
      */
-    int getHealth() {
+    int GetHealth() {
         return hp;
     }
 
@@ -51,28 +88,28 @@ public class Enemies : MonoBehaviour {
      * Input: int speed
      * Output: void
      */
-    void setMovespeed (float speed) {
+    void SetMovespeed (float speed) {
         moveSpeed = speed;
     }
 
     /*
-     * getMovespeed
+     * GetMovespeed
      * Purpose: return float speed at which enemy travels
      * Input: void
      * Output: int speed
      */
-    float getMovespeed() {
+    float GetMovespeed() {
         return moveSpeed;
     }
 
     /*
-     * setPatrolPoints
+     * SetPatrolPoints
      * Purpose: Store point locations for enemy to navigate to, append vector2 directions into a list to navigate through
      * Input: vector2
      * Output: void
      */
 
-    void setPatrolPoints(Vector2 newPoint){
+    void SetPatrolPoints(Vector2 newPoint){
         patrolPoints.Add(newPoint);
     }
 
@@ -82,19 +119,19 @@ public class Enemies : MonoBehaviour {
      * Input: void
      * Output: vector2
      */
-    Vector2 setPatrolPoints() {
+    Vector2 GetGoalPoint() {
         Vector2 temp = (Vector2) (patrolPoints[0]);
         patrolPoints.RemoveAt(0);
         return temp;
     }
 
     /*
-     * setScore
+     * SetScore
      * Purpose: Integer value of enemy upon death
      * Input: int value
      * Output: void
      */
-    void setScore(int value) {
+    void SetScore(int value) {
         score = value;
      }
 
@@ -104,7 +141,7 @@ public class Enemies : MonoBehaviour {
      * Input: int value
      * Output: void
      */
-    void incrementScore(int value)
+    void IncrementScore(int value)
     {
         score += value;
     }
@@ -115,7 +152,7 @@ public class Enemies : MonoBehaviour {
      * Input: int value
      * Output: void
      */
-    void decrimentScore(int value)
+    void DecrimentScore(int value)
     {
         score -= value;
     }
@@ -126,17 +163,17 @@ public class Enemies : MonoBehaviour {
      * Input: void
      * Output: int value
      */
-    int getScore() {
+    int GetScore() {
         return score;
      }
 
     /*
-     * setAlive
+     * isAlive
      * Purpose: Sets boolean of enemy is alive or dead
      * Input: int hp
      * Output: bool alive
      */
-     bool isAlive (int hp) {
+     bool IsAlive (int hp) {
         if (hp <= 0) {
             alive = false;
         }
