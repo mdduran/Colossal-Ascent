@@ -2,15 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpCode : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public enum OpCode
+{
+    Broadcast,
+    Connect,
+    Disconnect,
+    Accept,
+    Reject,
+    StripPot,
+    RotPot,
+    FireButton,
+    JumpButton,
+    ExitButton,
+    StartButton,
+    SetLEDStrip,
+    SetLEDPixel,
+    ClearLEDs,
+    UpdateLEDs,
+    KeepAlive
 }
+

@@ -1,16 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 
-public class Client : MonoBehaviour {
+public class Client
+{
+    public int Port;
+    public int PlayerNum;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void Run()
+    {
+
+    }
+
+    public void Send(byte[] bytes)
+    {
+    }
+
 }
