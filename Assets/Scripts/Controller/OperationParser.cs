@@ -16,7 +16,7 @@ public class OperationParser {
     
 
     // TODO: Send the event to the game manager
-    public Event Recieve(byte[] data, int playerNumber)
+    public static Event Recieve(byte[] data, int playerNumber)
     {
         //parse the data
         OpCode operation = (OpCode)data[0];
@@ -57,7 +57,7 @@ public class OperationParser {
         return newEvent;
     }
 
-    public byte[] Broadcast(int port)
+    public static byte[] Broadcast(int port)
     {
         //Add the opcode with the port
         byte[] data = new byte[5];
@@ -68,7 +68,7 @@ public class OperationParser {
     }
 
     /*SimpleSend*/
-    public byte[] SimpleSend(OpCode currentOp)
+    public static byte[] SimpleSend(OpCode currentOp)
     {
         byte[] data = new byte[1];
         data[0] = (byte)currentOp;
@@ -76,7 +76,7 @@ public class OperationParser {
     }
 
     /*Set LED Strip*/
-    public byte[] SetLEDStrip(byte startPixel, byte endPixel, color[] colors)
+    public static byte[] SetLEDStrip(byte startPixel, byte endPixel, color[] colors)
     {
         byte[] data = new byte[18]; //TODO Do the proper math
 
@@ -86,7 +86,7 @@ public class OperationParser {
     }
 
     /*Set LED Pixel*/
-    public byte[] SetLEDPixel(byte pixelIndex, color newColor)
+    public static byte[] SetLEDPixel(byte pixelIndex, color newColor)
     {
         byte[] data = new byte[5];
         //DO stuff
