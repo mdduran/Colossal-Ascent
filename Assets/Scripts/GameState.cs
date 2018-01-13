@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameState : MonoBehaviour {
+public enum GameState {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	INTRO,
+    MAIN,
+    PLAY,
+    PAUSE,
+    OPTIONS
 }
