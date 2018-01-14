@@ -16,16 +16,18 @@ public class Enemy : MonoBehaviour {
     public Vector2 newPoint;
     public Vector2 goalPoint;
     public Vector2 currPoint;
+    public int currentPatrolIndex;
     public int score;
     public bool alive;
     public bool isPaused;
+    public float distModifier;
     // Use this for initialization
     void Start () {
         this.hp = 1;
         this.moveSpeed = 20;
-        this.patrolPoints = new Vector2[numPatrolPoints];
-        this.goalPoint.x = 0;
-        this.goalPoint.y = 0;
+        if(this.patrolPoints.Length <= 0)
+            this.patrolPoints = new Vector2[numPatrolPoints];
+        this.currentPatrolIndex = 0;
         this.score = 0;
         this.alive = true;
         this.characterController = (CharacterController)GetComponent(typeof(CharacterController));
@@ -39,6 +41,8 @@ public class Enemy : MonoBehaviour {
         {
             this.characterController = (CharacterController)GetComponent(typeof(CharacterController));
         }
+
+        distModifier = 0.5f;
     }
 	
 	// Update is called once per frame
@@ -47,36 +51,31 @@ public class Enemy : MonoBehaviour {
         {
             if(patrolPoints.Length > 1)
             {
-                int currentPatrolIndex = 0;
-                while (currentPatrolIndex < patrolPoints.Length)
-                {
-                    //set curr point
-                    currPoint = patrolPoints[currentPatrolIndex];
-
-                    if (currentPatrolIndex == patrolPoints.Length - 1)
-                    {
-
-                        //set the goal to patrolPoints[0]
-                        goalPoint = patrolPoints[0];
-                        Vector2.LerpUnclamped(currPoint, goalPoint, moveSpeed * Time.deltaTime);
-                        //set the index to 0
-                        currentPatrolIndex = 0;
-                    }
-                    else
-                    {
-                        //set the goal point to the next index
-                        goalPoint = patrolPoints[currentPatrolIndex++];
-                        //Move to goal point
-                        Vector2.LerpUnclamped(currPoint, goalPoint, moveSpeed * Time.deltaTime);
-                        //increment index
-                        currentPatrolIndex++;
-                    }
-                }
+                //set the goal to be 1 more than the current patrol point
+                goalPoint = patrolPoints[currentPatrolIndex++];
+                
             }
             
         }
         
 	}
+
+    public int nextGoal()
+    {
+        int nextIndex;
+        if (Vector2.Distance(transform.position, goalPoint) <= distModifier) //Reached goal node
+        {
+            nextIndex = 0;
+
+        }
+        else //Have not reached goal node
+        {
+            
+            nextIndex = currentPatrolIndex++;
+        }
+        return nextIndex;
+    }
+
 
     /*
      * setHealth

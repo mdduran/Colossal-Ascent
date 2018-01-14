@@ -96,8 +96,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d1803414064ed4eba7400ac598f3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  endPoint: {x: 0, y: 5, z: -10}
-  moveSpeed: 0.01
+  endPoint: {x: 0, y: 5.5, z: -10}
+  moveSpeed: 0.25
   isPaused: 0
 --- !u!124 &124589803701676698
 Behaviour:
