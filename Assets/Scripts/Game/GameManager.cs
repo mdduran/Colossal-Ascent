@@ -4,27 +4,179 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Server server;
+    // UI
+    public UIManager UI;
 
+    // Prefabs
+    public GameObject PlayerPrefab;
+    public GameObject LevelPrefab;
+
+    // Game Objects
+    private MovingCamera mc;
+    private GameObject level;
+    private List<Player> players;
+
+    // Server
+    private Server server; // TODO handle connects and disconnects
     public int AcceptingPort;
     public int CommunicationPort;
-    public GameState currentGameState;
+    private Queue InputEventQueue;
+
+    // Music
+    public AudioClip MenuMusic;
+    public AudioClip PlayMusic;
+    private AudioSource MusicPlayer;
+
+    // State
+    private GameState currentState;
+    private GameState State
+    {
+        get
+        {
+            return currentState;
+        }
+        set
+        {
+            switch(value)
+            {
+                case GameState.Menu:
+                    MusicPlayer.clip = MenuMusic;
+                    break;
+                case GameState.Play:
+                    MusicPlayer.clip = PlayMusic;
+                    break;
+                default:
+                    break;
+            }
+            currentState = value;
+        }
+    }
+
+
 
 	// Use this for initialization
 	void Start () {
-        server = new Server();
+        InputEventQueue = Queue.Synchronized(new Queue());
+        server = new Server(); // TODO give the server the queue
         server.AcceptingPort = AcceptingPort;
         server.CommunicationPort = CommunicationPort;
         server.Start();
+        State = GameState.Menu;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
+	void Update ()
+    {
+		switch(State)
+        {
+            case GameState.Menu:
+                break;
+            case GameState.Play:
+                Cycle();
+                break;
+            case GameState.Pause:
+                break;
+        }
 	}
 
     private void OnApplicationQuit()
     {
         server.Stop();
+    }
+
+    public void DestroyWorld()
+    {
+        // Destroy Level
+        Destroy(level);
+        // Destroy Players
+        foreach (Player p in players)
+            Destroy(p);
+        players = new List<Player>();
+
+    }
+
+    public void InitializeMenu()
+    {
+        DestroyWorld();
+        // Spawn prefab
+        level = Instantiate(LevelPrefab);
+        // TODO set camera position
+
+        State = GameState.Menu;
+    }
+
+    public void InitializeGame()
+    {
+        DestroyWorld();
+        // Spawn prefab
+        level = Instantiate(LevelPrefab);
+        // TODO set camera position
+        // TODO spawn player
+
+        State = GameState.Play;
+    }
+
+    public void Cycle()
+    {
+        // check events
+
+        while(InputEventQueue.Count > 0)
+        {
+            Event e = (Event)InputEventQueue.Dequeue();
+            switch(e.Action) // TODO handle each event
+            {
+                case OpCode.StripPot:
+                    //players[e.PlayerNum];
+                    break;
+                case OpCode.RotPot:
+                    break;
+                case OpCode.JumpButton:
+                    break;
+                case OpCode.FireButton:
+                    break;
+                case OpCode.StartButton:
+                    break;
+                case OpCode.ExitButton:
+                    break;
+            }
+        }
+
+
+    }
+
+    public void Pause()
+    {
+        // Pause Camera
+        mc.isPaused = true;
+        // TODO Set Enemies Paused
+
+        State = GameState.Pause;
+    }
+
+    public void Resume()
+    {
+        // Unpause Camera
+        mc.isPaused = false;
+        // TODO Unpause Enemies
+
+        State = GameState.Play;
+    }
+
+    public void GoalReached()
+    {
+        // Set End Text
+        UI.SetEndText("You Win!");
+        // Show End Panel
+        UI.Screen = UserInterfaceScreens.EndMenu;
+        State = GameState.Menu;
+    }
+
+    public void PlayerDied()
+    {
+        // Set End Text
+        UI.SetEndText("You Died!");
+        // Show End Panel
+        UI.Screen = UserInterfaceScreens.EndMenu;
+        State = GameState.Menu;
     }
 }
