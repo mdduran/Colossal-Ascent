@@ -9,8 +9,8 @@ public class QuickPlayer : MonoBehaviour
     public float StaminaRechargeRate;
     public float MoveSpeed;
     public float JumpHeight;
+    public float Gravity;
 
-    private CharacterController CC;
     public float Goal;
     public float negativeBound;
     public float positiveBound;
@@ -19,8 +19,6 @@ public class QuickPlayer : MonoBehaviour
 
 	// Use this for initialization
 	void Start () {
-        CC = GetComponent<CharacterController>();
-        Goal = 0.2f;
 	}
 	
 	// Update is called once per frame
@@ -32,13 +30,25 @@ public class QuickPlayer : MonoBehaviour
         // Move Character
         float v = ((x - transform.position.x) * 2) / (positiveBound - negativeBound) * (MoveSpeed * (Stamina / MaxStamina));
         Velocity.x = v;
-        CC.Move(Velocity * Time.deltaTime);
+        transform.position = transform.position + Velocity * Time.deltaTime;
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        rb.AddForce(new Vector2(v, 0));
 
         // Increase Stamina
         Stamina -= v * Time.deltaTime;
         Stamina += StaminaRechargeRate * Time.deltaTime;
         Stamina = Mathf.Min(MaxStamina, Stamina);
         Stamina = Mathf.Max(0, Stamina);
+
+
 	}
+
+    public void Jump()
+    {
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        rb.AddForce(new Vector2(0, JumpHeight));
+        Debug.Log("Jumped");
+    }
+
 
 }

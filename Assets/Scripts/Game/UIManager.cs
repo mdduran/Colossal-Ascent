@@ -7,7 +7,8 @@ public enum UserInterfaceScreens
 {
     MainMenu,
     PauseMenu,
-    EndMenu
+    EndMenu,
+    None
 }
 
 public class UIManager : MonoBehaviour
@@ -35,9 +36,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
-	void Start ()
+	void Start()
     {
-        Screen = StartScreen;
+        currentScreen = StartScreen;
+        setPanel(currentScreen, true);
+
 	}
 
     public void SetEndText(string s)
@@ -47,7 +50,8 @@ public class UIManager : MonoBehaviour
 
     private void setPanel(UserInterfaceScreens screen, bool active)
     {
-        switch(screen)
+
+        switch (screen)
         {
             case UserInterfaceScreens.MainMenu:
                 MainPanel.SetActive(active);
@@ -57,6 +61,8 @@ public class UIManager : MonoBehaviour
                 break;
             case UserInterfaceScreens.EndMenu:
                 EndPanel.SetActive(active);
+                break;
+            default:
                 break;
         }
     }

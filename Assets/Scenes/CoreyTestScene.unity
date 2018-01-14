@@ -77,17 +77,15 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
-    m_PVRFilterTypeDirect: 0
-    m_PVRFilterTypeIndirect: 0
-    m_PVRFilterTypeAO: 0
+    m_PVRFiltering: 0
     m_PVRFilteringMode: 1
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
     m_PVRFilteringGaussRadiusAO: 2
-    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
-    m_PVRFilteringAtrousPositionSigmaIndirect: 2
-    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_PVRFilteringAtrousColorSigma: 1
+    m_PVRFilteringAtrousNormalSigma: 1
+    m_PVRFilteringAtrousPositionSigma: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -109,8 +107,6 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
-    debug:
-      m_Flags: 0
   m_NavMeshData: {fileID: 0}
 --- !u!1001 &436042949
 Prefab:
@@ -229,6 +225,7 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+  m_StereoMirrorMode: 0
 --- !u!4 &534930296
 Transform:
   m_ObjectHideFlags: 0
@@ -251,11 +248,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4054424741200708, guid: 72106f0dce4c94d4aa8cb1fbc97aa442, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.16
+      value: 4.51
       objectReference: {fileID: 0}
     - target: {fileID: 4054424741200708, guid: 72106f0dce4c94d4aa8cb1fbc97aa442, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -3.15
+      value: 3.32
       objectReference: {fileID: 0}
     - target: {fileID: 4054424741200708, guid: 72106f0dce4c94d4aa8cb1fbc97aa442, type: 2}
       propertyPath: m_LocalPosition.z
@@ -281,9 +278,70 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114295019477360348, guid: 72106f0dce4c94d4aa8cb1fbc97aa442,
+        type: 2}
+      propertyPath: Goal
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114295019477360348, guid: 72106f0dce4c94d4aa8cb1fbc97aa442,
+        type: 2}
+      propertyPath: JumpHeight
+      value: 10
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 143628057403152582, guid: 72106f0dce4c94d4aa8cb1fbc97aa442, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 72106f0dce4c94d4aa8cb1fbc97aa442, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &709781076 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1481246437706814, guid: 72106f0dce4c94d4aa8cb1fbc97aa442,
+    type: 2}
+  m_PrefabInternal: {fileID: 585379850}
+--- !u!61 &709781078
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 709781076}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.4, y: 0.4}
+    newSize: {x: 0.4, y: 0.4}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.1, y: 0.3}
+  m_EdgeRadius: 0
+--- !u!50 &709781081
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 709781076}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1001 &904676923
 Prefab:
   m_ObjectHideFlags: 0

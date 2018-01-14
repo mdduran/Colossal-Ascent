@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     // Game Objects
     private MovingCamera mc;
     private GameObject level;
-    private List<Player> players;
+    private List<QuickPlayer> players;
 
     // Server
     private Server server;
@@ -40,11 +40,11 @@ public class GameManager : MonoBehaviour
             switch(value)
             {
                 case GameState.Menu:
-                    MusicPlayer.clip = MenuMusic;
+                    //MusicPlayer.clip = MenuMusic;
                     server.EnableBroadcasts = true;
                     break;
                 case GameState.Play:
-                    MusicPlayer.clip = PlayMusic;
+                    //MusicPlayer.clip = PlayMusic;
                     server.EnableBroadcasts = false;
                     break;
                 default:
@@ -60,9 +60,10 @@ public class GameManager : MonoBehaviour
 	void Start () {
         InputEventQueue = Queue.Synchronized(new Queue());
         server = new Server(AcceptingPort, CommunicationPort, InputEventQueue);
+        players = new List<QuickPlayer>();
         server.Start();
-        State = GameState.Menu;
         mc = GetComponent<MovingCamera>();
+        InitializeMenu();
 	}
 	
 	// Update is called once per frame
@@ -90,9 +91,9 @@ public class GameManager : MonoBehaviour
         // Destroy Level
         Destroy(level);
         // Destroy Players
-        foreach (Player p in players)
-            Destroy(p);
-        players = new List<Player>();
+        foreach (QuickPlayer p in players)
+            Destroy(p.gameObject);
+        players = new List<QuickPlayer>();
 
     }
 
@@ -119,17 +120,22 @@ public class GameManager : MonoBehaviour
         // set camera position
         Camera.main.transform.position = Vector2.zero;
         // TODO set camera goal point
+        
 
         // spawn player
-        GameObject newPlayer = Instantiate(PlayerPrefab);
-        players.Add(newPlayer.GetComponent<Player>());
+        GameObject newPlayer = Instantiate(PlayerPrefab, new Vector2(0.0f, 3.0f), new Quaternion());
+        players.Add(newPlayer.GetComponent<QuickPlayer>());
 
         State = GameState.Play;
+        UI.Screen = UserInterfaceScreens.None;
     }
 
     public void Cycle()
     {
         // check events
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            players[0].Jump();
 
         while(InputEventQueue.Count > 0)
         {
@@ -137,11 +143,12 @@ public class GameManager : MonoBehaviour
             switch(e.Action) // TODO handle each event
             {
                 case OpCode.StripPot:
-                    //players[e.PlayerNum];
+                    players[e.PlayerNum].Goal = e.Value / 255.0f;
                     break;
                 case OpCode.RotPot:
                     break;
                 case OpCode.JumpButton:
+                    players[e.PlayerNum].Jump();
                     break;
                 case OpCode.FireButton:
                     break;

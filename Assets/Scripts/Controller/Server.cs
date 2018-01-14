@@ -31,17 +31,14 @@ public class Server
     public void Start()
     {
         Clients = new List<Client>();
-
+        Running = true;
         // Start thread
         thread = new Thread(Run);
         thread.Start();
         broadcastThread = new Thread(Broadcast);
         broadcastThread.Start();
 
-        Running = true;
 
-        Debug.Log("Starting Server on port: " + AcceptingPort);
-        Broadcast();
     }
 
     public void Stop()
@@ -54,6 +51,7 @@ public class Server
 
     public void Run()
     {
+        Debug.Log("Starting Server on port: " + AcceptingPort);
         UdpClient listener = new UdpClient(AcceptingPort);
         IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, AcceptingPort);
 
