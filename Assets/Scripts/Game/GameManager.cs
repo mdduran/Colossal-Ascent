@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     public int AcceptingPort;
     public int CommunicationPort;
+    public GameState currentGameState;
 
 	// Use this for initialization
 	void Start () {

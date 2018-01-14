@@ -9,7 +9,6 @@ public class MovingCamera : MonoBehaviour {
     public bool isPaused = false;
 	// Use this for initialization
 	void Start () {
-        if(endPoint == null)
         endPoint = new Vector3(0.0f, 5.0f, -10f);
 	}
 	
