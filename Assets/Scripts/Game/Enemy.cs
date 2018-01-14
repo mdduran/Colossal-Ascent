@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
     public CharacterController characterController;
-    public Animator animator;
+    //public Animator animator;
     public Sprite sprite;
     public SpriteRenderer sr;
     public int hp;
@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour {
     public Vector2 currPoint;
     public int score;
     public bool alive;
+    public bool isPaused;
     // Use this for initialization
     void Start () {
         this.hp = 1;
@@ -31,9 +32,9 @@ public class Enemy : MonoBehaviour {
         if (this.sprite == null) {
             Debug.LogError("Sprite not found!");
         }
-        if (this.animator != null) {
+        /*if (this.animator != null) {
             this.animator = GetComponent<Animator>();
-        }
+        }*/
         if (this.characterController != null)
         {
             this.characterController = (CharacterController)GetComponent(typeof(CharacterController));

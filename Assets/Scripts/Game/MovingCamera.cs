@@ -20,4 +20,9 @@ public class MovingCamera : MonoBehaviour {
         }
 	}
 
+    public void SetPosition(Vector2 newPos)
+    {
+        transform.position = newPos;
+    }
+
 }

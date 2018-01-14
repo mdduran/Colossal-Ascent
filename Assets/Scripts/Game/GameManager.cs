@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
         server.CommunicationPort = CommunicationPort;
         server.Start();
         State = GameState.Menu;
+        mc = GetComponent<MovingCamera>();
 	}
 	
 	// Update is called once per frame
@@ -111,6 +112,7 @@ public class GameManager : MonoBehaviour
         // Spawn prefab
         level = Instantiate(LevelPrefab);
         // TODO set camera position
+        Camera.main.transform.position = Vector2.zero;
         // TODO spawn player
 
         State = GameState.Play;
@@ -148,7 +150,11 @@ public class GameManager : MonoBehaviour
     {
         // Pause Camera
         mc.isPaused = true;
-        // TODO Set Enemies Paused
+        // Set Enemies Paused
+        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            enemy.GetComponentInChildren<Enemy>().isPaused = true;
+        }
 
         State = GameState.Pause;
     }
@@ -157,7 +163,11 @@ public class GameManager : MonoBehaviour
     {
         // Unpause Camera
         mc.isPaused = false;
-        // TODO Unpause Enemies
+        // Unpause Enemies
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            enemy.GetComponentInChildren<Enemy>().isPaused = false;
+        }
 
         State = GameState.Play;
     }
