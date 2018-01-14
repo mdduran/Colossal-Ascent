@@ -14,8 +14,19 @@ public class Server
     public int MaxClients;
     public List<Client> Clients;
     public bool Running;
+    public int BroadcastFrequency;
+    public bool SendBroadcasts; // TODO enable this during menus
 
     private Thread thread;
+    private Thread broadcastThread;
+
+    public Server(int AcceptingPort, int CommunicationPort, Queue EventQueue)
+    {
+        this.AcceptingPort = AcceptingPort;
+        this.CommunicationPort = CommunicationPort;
+        this.EventQueue = EventQueue;
+        BroadcastFrequency = 15;
+    }
 
     public void Start()
     {
@@ -24,6 +35,9 @@ public class Server
         // Start thread
         thread = new Thread(Run);
         thread.Start();
+        broadcastThread = new Thread(Broadcast);
+        broadcastThread.Start();
+
         Running = true;
 
         Debug.Log("Starting Server on port: " + AcceptingPort);
@@ -58,21 +72,6 @@ public class Server
                         CreateClient(groupEP);
                         bytes[0] = (byte)OpCode.Accept;
                         listener.Send(bytes, 1, groupEP);
-                        //bytes[0] = (byte)OpCode.SetLEDPixel;
-                        ByteColor color = new ByteColor();
-                        color.red = 0;
-                        color.blue = 0xFF;
-                        color.green = 0;
-                        byte[] colorChange = new byte[5];
-                        colorChange[0] = (byte)OpCode.SetLEDPixel;
-                        byte[] pixelColor = new byte[4];
-                        pixelColor = OperationParser.SetLEDPixel(0, color);
-                        Array.Copy(pixelColor, 0, colorChange, 1, pixelColor.Length);
-                        Thread.Sleep(100);
-                        Clients[0].Send(colorChange);
-                        byte[] updateByte = new byte[1];
-                        updateByte[0] = (byte)OpCode.UpdateLEDs;
-                        Clients[0].Send(updateByte);
                     }                   
                 }
                 else
@@ -97,7 +96,7 @@ public class Server
 
     public void Broadcast()
     {
-        Debug.Log("Broadcasting...");
+        
         try
         {
             Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -106,7 +105,17 @@ public class Server
             IPAddress broadcast = IPAddress.Parse("192.168.43.255");
             IPEndPoint ep = new IPEndPoint(broadcast, 4210);
 
-            s.SendTo(OperationParser.Broadcast(AcceptingPort), ep);
+            while(Running) 
+            {
+                if(SendBroadcasts)
+                {
+                    Debug.Log("Broadcasting...");
+                    s.SendTo(OperationParser.Broadcast(AcceptingPort), ep);
+                }
+
+                Thread.Sleep(BroadcastFrequency * 1000);
+            }
+
             s.Close();
         }
         catch (Exception e)

@@ -25,7 +25,7 @@ public class Client
         Debug.Log(EndPoint + "");
         this.Port = Port;
         this.PlayerNum = PlayerNum;
-        this.Events = EventsQueue;
+        Events = EventsQueue;
 
         Running = true;
         Self = new Thread(Run);
@@ -50,29 +50,9 @@ public class Client
                 {
                     bytes = Listener.Receive(ref EndPoint);
                     // Parse Bytes into event
-                    Event e = OperationParser.Recieve(bytes, 0);
+                    Event e = OperationParser.Recieve(bytes, 0); // TODO multi controller player num
                     //Debug.Log(e.Action + " " + e.Value);
-                    if(e.Action == OpCode.StripPot)
-                    {
-                        byte[] colorChange = new byte[5];
-                        byte hue = e.Value;
-
-                        Color newColor = Color.HSVToRGB((float)hue / 255, 1, 1);
-                        ByteColor byteColor;
-                        
-                        byteColor.red = BitConverter.GetBytes(newColor.r)[0];
-                        byteColor.green = BitConverter.GetBytes(newColor.g)[0];
-                        byteColor.blue = BitConverter.GetBytes(newColor.b)[0];
-                        colorChange[0] = (byte)OpCode.SetLEDPixel;
-
-                        byte[] newBytes = new byte[4];
-                        newBytes = OperationParser.SetLEDPixel(0, byteColor);
-                        Array.Copy(newBytes, 0, colorChange, 1, 4);
-                        Send(colorChange);
-                        byte[] updateByte = new byte[1];
-                        updateByte[0] = (byte)OpCode.UpdateLEDs;
-                        Send(updateByte);
-                    }
+                    Events.Enqueue(e);
                 }
                 //else
                 //    Thread.Sleep(10);
@@ -94,6 +74,50 @@ public class Client
     {
         if(Listener != null)
             Listener.Send(bytes, bytes.Length, EndPoint);
+    }
+
+    public void LED()
+    {
+        //bytes[0] = (byte)OpCode.SetLEDPixel;
+        ByteColor color = new ByteColor();
+        color.red = 0;
+        color.blue = 0xFF;
+        color.green = 0;
+        byte[] colorChange = new byte[5];
+        colorChange[0] = (byte)OpCode.SetLEDPixel;
+        byte[] pixelColor = new byte[4];
+        pixelColor = OperationParser.SetLEDPixel(0, color);
+        Array.Copy(pixelColor, 0, colorChange, 1, pixelColor.Length);
+        Thread.Sleep(100);
+        Send(colorChange);
+        byte[] updateByte = new byte[1];
+        updateByte[0] = (byte)OpCode.UpdateLEDs;
+        Send(updateByte);
+    }
+
+    public void SliderToLed(Event e)
+    {
+        if (e.Action == OpCode.StripPot)
+        {
+            byte[] colorChange = new byte[5];
+            byte hue = e.Value;
+
+            Color newColor = Color.HSVToRGB((float)hue / 255, 1, 1);
+            ByteColor byteColor;
+
+            byteColor.red = BitConverter.GetBytes(newColor.r)[0];
+            byteColor.green = BitConverter.GetBytes(newColor.g)[0];
+            byteColor.blue = BitConverter.GetBytes(newColor.b)[0];
+            colorChange[0] = (byte)OpCode.SetLEDPixel;
+
+            byte[] newBytes = new byte[4];
+            newBytes = OperationParser.SetLEDPixel(0, byteColor);
+            Array.Copy(newBytes, 0, colorChange, 1, 4);
+            Send(colorChange);
+            byte[] updateByte = new byte[1];
+            updateByte[0] = (byte)OpCode.UpdateLEDs;
+            Send(updateByte);
+        }
     }
 
 }

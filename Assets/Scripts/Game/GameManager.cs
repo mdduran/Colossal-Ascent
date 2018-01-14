@@ -57,9 +57,7 @@ public class GameManager : MonoBehaviour
 	// Use this for initialization
 	void Start () {
         InputEventQueue = Queue.Synchronized(new Queue());
-        server = new Server(); // TODO give the server the queue
-        server.AcceptingPort = AcceptingPort;
-        server.CommunicationPort = CommunicationPort;
+        server = new Server(AcceptingPort, CommunicationPort, InputEventQueue); // TODO give the server the queue
         server.Start();
         State = GameState.Menu;
 	}
