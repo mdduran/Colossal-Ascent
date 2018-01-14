@@ -15,7 +15,6 @@ public class OperationParser {
     public int port;
     
 
-    // TODO: Send the event to the game manager
     public static Event Recieve(byte[] data, int playerNumber)
     {
         //parse the data

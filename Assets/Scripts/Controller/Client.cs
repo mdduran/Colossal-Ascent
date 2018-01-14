@@ -76,7 +76,7 @@ public class Client
             Listener.Send(bytes, bytes.Length, EndPoint);
     }
 
-    public void LED()
+    public void LED() // TODO add to GameManager so we can change LEDs in game
     {
         //bytes[0] = (byte)OpCode.SetLEDPixel;
         ByteColor color = new ByteColor();

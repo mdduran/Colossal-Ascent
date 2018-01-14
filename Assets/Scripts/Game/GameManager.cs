@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     private List<Player> players;
 
     // Server
-    private Server server; // TODO handle connects and disconnects
+    private Server server;
     public int AcceptingPort;
     public int CommunicationPort;
     private Queue InputEventQueue;
@@ -41,9 +41,11 @@ public class GameManager : MonoBehaviour
             {
                 case GameState.Menu:
                     MusicPlayer.clip = MenuMusic;
+                    server.EnableBroadcasts = true;
                     break;
                 case GameState.Play:
                     MusicPlayer.clip = PlayMusic;
+                    server.EnableBroadcasts = false;
                     break;
                 default:
                     break;
@@ -57,7 +59,7 @@ public class GameManager : MonoBehaviour
 	// Use this for initialization
 	void Start () {
         InputEventQueue = Queue.Synchronized(new Queue());
-        server = new Server(AcceptingPort, CommunicationPort, InputEventQueue); // TODO give the server the queue
+        server = new Server(AcceptingPort, CommunicationPort, InputEventQueue);
         server.Start();
         State = GameState.Menu;
         mc = GetComponent<MovingCamera>();
@@ -99,7 +101,10 @@ public class GameManager : MonoBehaviour
         DestroyWorld();
         // Spawn prefab
         level = Instantiate(LevelPrefab);
-        // TODO set camera position
+
+        // set camera position
+        Camera.main.transform.position = Vector2.zero;
+        // TODO set camera goal point
 
         State = GameState.Menu;
     }
@@ -107,11 +112,17 @@ public class GameManager : MonoBehaviour
     public void InitializeGame()
     {
         DestroyWorld();
+
         // Spawn prefab
         level = Instantiate(LevelPrefab);
-        // TODO set camera position
+
+        // set camera position
         Camera.main.transform.position = Vector2.zero;
-        // TODO spawn player
+        // TODO set camera goal point
+
+        // spawn player
+        GameObject newPlayer = Instantiate(PlayerPrefab);
+        players.Add(newPlayer.GetComponent<Player>());
 
         State = GameState.Play;
     }

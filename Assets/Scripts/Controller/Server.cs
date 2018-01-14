@@ -15,7 +15,7 @@ public class Server
     public List<Client> Clients;
     public bool Running;
     public int BroadcastFrequency;
-    public bool SendBroadcasts; // TODO enable this during menus
+    public bool EnableBroadcasts;
 
     private Thread thread;
     private Thread broadcastThread;
@@ -107,7 +107,7 @@ public class Server
 
             while(Running) 
             {
-                if(SendBroadcasts)
+                if(EnableBroadcasts)
                 {
                     Debug.Log("Broadcasting...");
                     s.SendTo(OperationParser.Broadcast(AcceptingPort), ep);
