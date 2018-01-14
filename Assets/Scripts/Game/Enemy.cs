@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemies : MonoBehaviour {
+
+public class Enemy : MonoBehaviour {
     public CharacterController characterController;
     public Animator animator;
     public Sprite sprite;
@@ -10,16 +11,18 @@ public class Enemies : MonoBehaviour {
     public int hp;
     public bool hit;
     public float moveSpeed;
-    public ArrayList patrolPoints;
+    public int numPatrolPoints;
+    public Vector2[] patrolPoints;
     public Vector2 newPoint;
     public Vector2 goalPoint;
+    public Vector2 currPoint;
     public int score;
     public bool alive;
     // Use this for initialization
     void Start () {
         this.hp = 1;
         this.moveSpeed = 20;
-        this.patrolPoints = new ArrayList();
+        this.patrolPoints = new Vector2[numPatrolPoints];
         this.goalPoint.x = 0;
         this.goalPoint.y = 0;
         this.score = 0;
@@ -39,11 +42,39 @@ public class Enemies : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        SetHealth(hit);
-        SetMovespeed(moveSpeed);
-        SetPatrolPoints(newPoint);
-        SetScore(0);
-        this.alive = IsAlive(this.hp);
+        if(hp > 0)
+        {
+            if(patrolPoints.Length > 1)
+            {
+                int currentPatrolIndex = 0;
+                while (currentPatrolIndex < patrolPoints.Length)
+                {
+                    //set curr point
+                    currPoint = patrolPoints[currentPatrolIndex];
+
+                    if (currentPatrolIndex == patrolPoints.Length - 1)
+                    {
+
+                        //set the goal to patrolPoints[0]
+                        goalPoint = patrolPoints[0];
+                        Vector2.LerpUnclamped(currPoint, goalPoint, moveSpeed * Time.deltaTime);
+                        //set the index to 0
+                        currentPatrolIndex = 0;
+                    }
+                    else
+                    {
+                        //set the goal point to the next index
+                        goalPoint = patrolPoints[currentPatrolIndex++];
+                        //Move to goal point
+                        Vector2.LerpUnclamped(currPoint, goalPoint, moveSpeed * Time.deltaTime);
+                        //increment index
+                        currentPatrolIndex++;
+                    }
+                }
+            }
+            
+        }
+        
 	}
 
     /*
@@ -103,14 +134,17 @@ public class Enemies : MonoBehaviour {
     }
 
     /*
-     * SetPatrolPoints
-     * Purpose: Store point locations for enemy to navigate to, append vector2 directions into a list to navigate through
+     * AddPatrolPoints
+     * Purpose: Adds 1 new patrol point to the list of patrol points
      * Input: vector2
      * Output: void
      */
 
-    void SetPatrolPoints(Vector2 newPoint){
-        patrolPoints.Add(newPoint);
+    void AddPatrolPoint(Vector2 newPoint){
+        Vector2[] clone = patrolPoints;
+        patrolPoints = new Vector2[clone.Length + 1];
+        clone.CopyTo(patrolPoints, 0);
+        patrolPoints[patrolPoints.Length + 1] = newPoint;
     }
 
     /*
@@ -121,7 +155,7 @@ public class Enemies : MonoBehaviour {
      */
     Vector2 GetGoalPoint() {
         Vector2 temp = (Vector2) (patrolPoints[0]);
-        patrolPoints.RemoveAt(0);
+        //patrolPoints.RemoveAt(0);
         return temp;
     }
 
