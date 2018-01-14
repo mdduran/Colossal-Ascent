@@ -51,10 +51,31 @@ public class Client
                     bytes = Listener.Receive(ref EndPoint);
                     // Parse Bytes into event
                     Event e = OperationParser.Recieve(bytes, 0);
-                    Debug.Log(e.Action + " " + e.Value);
+                    //Debug.Log(e.Action + " " + e.Value);
+                    if(e.Action == OpCode.StripPot)
+                    {
+                        byte[] colorChange = new byte[5];
+                        byte hue = e.Value;
+
+                        Color newColor = Color.HSVToRGB((float)hue / 255, 1, 1);
+                        ByteColor byteColor;
+                        
+                        byteColor.red = BitConverter.GetBytes(newColor.r)[0];
+                        byteColor.green = BitConverter.GetBytes(newColor.g)[0];
+                        byteColor.blue = BitConverter.GetBytes(newColor.b)[0];
+                        colorChange[0] = (byte)OpCode.SetLEDPixel;
+
+                        byte[] newBytes = new byte[4];
+                        newBytes = OperationParser.SetLEDPixel(0, byteColor);
+                        Array.Copy(newBytes, 0, colorChange, 1, 4);
+                        Send(colorChange);
+                        byte[] updateByte = new byte[1];
+                        updateByte[0] = (byte)OpCode.UpdateLEDs;
+                        Send(updateByte);
+                    }
                 }
-                else
-                    Thread.Sleep(10);
+                //else
+                //    Thread.Sleep(10);
 
             }
         }

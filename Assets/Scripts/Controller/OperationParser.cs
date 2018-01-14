@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct color
+public struct ByteColor
 {
-    byte red;
-    byte green;
-    byte blue;
-}
+    public byte red;
+    public byte green;
+    public byte blue;
+};
 
 public class OperationParser {
     public byte[] controllerData;
@@ -75,21 +75,46 @@ public class OperationParser {
         return data;
     }
 
-    /*Set LED Strip*/
-    public static byte[] SetLEDStrip(byte startPixel, byte endPixel, color[] colors)
-    {
-        byte[] data = new byte[18]; //TODO Do the proper math
 
+    /*Set LED Strip*/
+    public static byte[] SetLEDStrip(byte startPixel, byte endPixel, ByteColor[] colors)
+    {
+        int numLights = colors.Length;
+        int arraySize = 3 + (numLights * 3);
+        byte[] data = new byte[arraySize];
+        byte[] colorArray = ColorsToByteArray(colors);
+        data[0] = (byte)OpCode.SetLEDStrip;
+        Array.Copy(colorArray, 0, data, 1, data.Length);
 
         return data;
 
     }
 
-    /*Set LED Pixel*/
-    public static byte[] SetLEDPixel(byte pixelIndex, color newColor)
+    public static byte[] ColorsToByteArray(ByteColor[] colors)
     {
-        byte[] data = new byte[5];
-        //DO stuff
+        byte[] data = new byte[colors.Length * 3];
+        for (int i = 0; i < colors.Length; i++)
+        {
+            for (int j = 0; j < data.Length; j += 3)
+            {
+                data[j] = colors[i].red;
+                data[j++] = colors[i].blue;
+                data[j + 2] = colors[i].green;
+            }
+
+        }
+
+        return data;
+    }
+
+    /*Set LED Pixel*/
+    public static byte[] SetLEDPixel(byte pixelIndex, ByteColor newColor)
+    {
+        byte[] data = new byte[4];
+        data[0] = pixelIndex;
+        data[1] = newColor.red;
+        data[2] = newColor.green;
+        data[3] = newColor.blue;
         return data;
     }
 

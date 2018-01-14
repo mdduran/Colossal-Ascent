@@ -58,6 +58,21 @@ public class Server
                         CreateClient(groupEP);
                         bytes[0] = (byte)OpCode.Accept;
                         listener.Send(bytes, 1, groupEP);
+                        //bytes[0] = (byte)OpCode.SetLEDPixel;
+                        ByteColor color = new ByteColor();
+                        color.red = 0;
+                        color.blue = 0xFF;
+                        color.green = 0;
+                        byte[] colorChange = new byte[5];
+                        colorChange[0] = (byte)OpCode.SetLEDPixel;
+                        byte[] pixelColor = new byte[4];
+                        pixelColor = OperationParser.SetLEDPixel(0, color);
+                        Array.Copy(pixelColor, 0, colorChange, 1, pixelColor.Length);
+                        Thread.Sleep(100);
+                        Clients[0].Send(colorChange);
+                        byte[] updateByte = new byte[1];
+                        updateByte[0] = (byte)OpCode.UpdateLEDs;
+                        Clients[0].Send(updateByte);
                     }                   
                 }
                 else
